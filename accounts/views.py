@@ -1,6 +1,7 @@
 from django.shortcuts import redirect, render
 from django.contrib import messages, auth
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 
 def register(request):
     if request.method == 'POST':
@@ -64,7 +65,11 @@ def login(request):
         return render(request, template_name='accounts/login.html')
 
 def logout(request):
-    return redirect('index')
+    if request.method == 'POST':
+        auth.logout(request)
+        messages.success(request, 'You are logged out')
+        return redirect('index')
 
+@login_required(login_url='login')
 def dashboard(request):
     return render(request, template_name='accounts/dashboard.html')
